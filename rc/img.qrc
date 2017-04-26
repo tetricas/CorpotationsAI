@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/cuper_mine.jpg</file>
+        <file>images/gold_mine.jpg</file>
+        <file>images/grass.jpg</file>
+        <file>images/mountain.jpg</file>
+        <file>images/rock.jpg</file>
+        <file>images/silver_mine.jpg</file>
+        <file>images/tree.jpg</file>
+    </qresource>
+</RCC>
