@@ -5,6 +5,5 @@
         <file>qml/MainForm.ui.qml</file>
         <file>qml/AboutDialog.qml</file>
         <file>qml/GameForm.ui.qml</file>
-        <file>qml/ConnectForm.ui.qml</file>
     </qresource>
 </RCC>

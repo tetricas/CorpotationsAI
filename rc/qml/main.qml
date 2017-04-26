@@ -14,7 +14,6 @@ Dialog {
 
     property alias startItem: start
     property alias gameItem: game
-    property alias connectItem: connect
 
     contentItem: StackView {
         id: dialogStackView
@@ -33,13 +32,8 @@ Dialog {
     MainForm {
         id: start
 
-        startBtn.visible: game.map.isConnected
         startBtn.onClicked: dialogStackView.push(gameItem)
 
-        reconnectBtn.visible: !game.map.isConnected
-        reconnectBtn.onClicked: game.map.reconnect();
-
-        connectBtn.onClicked: dialogStackView.push(connectItem)
         aboutBtn.onClicked: aboutDlg.open()
         exitBtn.onClicked: close()
     }
@@ -49,13 +43,6 @@ Dialog {
 
         backButton.onClicked:dialogStackView.push(startItem);
         goButton.onClicked: map.setTurn();
-    }
-
-    ConnectForm{
-        id: connect
-
-        backButton.onClicked: dialogStackView.push(startItem)
-        serverButton.onClicked: game.map.makeServer();
     }
 
     AboutDialog{

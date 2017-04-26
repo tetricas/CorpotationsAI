@@ -6,20 +6,16 @@ CONFIG += c++11
 INCLUDEPATH += include
 
 HEADERS += \
-    include/client.h \
     include/enum_types.h \
     include/game_space.h \
     include/logic.h \
-    include/map_maker.h \
-    include/server.h
+    include/map_maker.h
 
 SOURCES += \
-    src/client.cpp \
     src/game_space.cpp \
     src/logic.cpp \
     src/main.cpp \
-    src/map_maker.cpp \
-    src/server.cpp
+    src/map_maker.cpp
 
 RESOURCES += \
     rc/qml.qrc \
