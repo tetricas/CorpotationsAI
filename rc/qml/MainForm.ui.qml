@@ -7,7 +7,7 @@ Rectangle {
     property alias aboutBtn: aboutBtn
     property alias exitBtn: exitBtn
 
-    color: "#504747"
+    color: "#0A2E36"
 
     MainButton{
         id: startBtn

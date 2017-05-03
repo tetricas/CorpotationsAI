@@ -5,7 +5,7 @@ Dialog {
     id: customDialog
     title: "About"
     contentItem:Rectangle{
-        color: "#504747"
+        color: "#0A2E36"
         anchors.fill: parent
 
         Image {
@@ -24,6 +24,7 @@ Dialog {
             anchors.left: corpImg.right
             anchors.leftMargin: parent.width/20
             font.pixelSize: 22
+            color: "#00A53A"
             text: "Что-то о нас"
         }
 
@@ -33,6 +34,7 @@ Dialog {
             anchors.left :parent.left
             anchors.leftMargin: parent.width/20
             font.pixelSize: 22
+            color: "#00A53A"
             text: "Что-то о программе"
         }
 
@@ -42,6 +44,7 @@ Dialog {
             anchors.right :parent.right
             anchors.rightMargin: parent.width/20
             height: parent.height/10
+            width: height*2
             name: "Ok"
             onClicked: customDialog.close()
         }

@@ -7,17 +7,13 @@
 CGameSpace::CGameSpace(QQuickItem* parent):
 	QQuickPaintedItem(parent),
 	m_blockSideSize(1),
+	m_shift(1),
 	m_iPosX(0),
 	m_iPosY(0),
 	m_alpha(0),
 	m_blocksCount(10)
 {
 	setAcceptedMouseButtons(Qt::AllButtons);
-}
-
-void CGameSpace::setBlockSideSize(int blockSideSize)
-{
-	m_blockSideSize = blockSideSize;
 }
 
 int CGameSpace::blocksCount()
@@ -33,6 +29,11 @@ void CGameSpace::setTurn()
 
 void CGameSpace::paint(QPainter* painter)
 {
+	//border
+	QRect border(0, 0, width(), height());
+	painter->fillRect(border, QBrush(QColor("#036D19")));
+	//field
+	int fieldShift = ( width() - m_blockSideSize*10 ) / 2;
 	for( int i(0); i < m_blocksCount; ++i)
 		for (int j(0); j < m_blocksCount; ++j)
 		{
@@ -63,17 +64,18 @@ void CGameSpace::paint(QPainter* painter)
 			}
 
 			blockImg = blockImg.scaled(m_blockSideSize, m_blockSideSize, Qt::KeepAspectRatio);
-			painter->drawImage(i*m_blockSideSize, j*m_blockSideSize, blockImg);
+			painter->drawImage(i*m_blockSideSize + fieldShift, j*m_blockSideSize + fieldShift, blockImg);
 
-			QRect rect(i*m_blockSideSize, j*m_blockSideSize, m_blockSideSize, m_blockSideSize);
+			QRect rect(i*m_blockSideSize + fieldShift, j*m_blockSideSize + fieldShift, m_blockSideSize, m_blockSideSize);
 			painter->fillRect(rect, QBrush(QColor(m_map.getBlock(i,j).second)));
 		}
+	//player pointer
 	QPen pen(Qt::blue, 2);
 	painter->setPen(pen);
-	painter->drawRect(m_iPosX*m_blockSideSize, m_iPosY*m_blockSideSize, m_blockSideSize, m_blockSideSize);
+	painter->drawRect(m_iPosX*m_blockSideSize + fieldShift, m_iPosY*m_blockSideSize + fieldShift, m_blockSideSize, m_blockSideSize);
 }
 
-void CGameSpace::mouseReleaseEvent(QMouseEvent* event)
+void CGameSpace::mouseDoubleClickEvent(QMouseEvent* event)
 {
 	m_iPosX = int(event->localPos().x())/m_blockSideSize;
 	m_iPosY = int(event->localPos().y())/m_blockSideSize;

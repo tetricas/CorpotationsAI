@@ -7,25 +7,33 @@ Item {
     property alias goButton: goButton
     property alias map: map
 
-    Button{
-        id: backButton
-        height: 20
-        width: 80
-        text: "back"
-        anchors.bottom: map.top
-        anchors.bottomMargin: height/2
-        anchors.left: map.left
+    Rectangle{
+        anchors.fill: parent
+        color: "#0A2E36"
     }
 
-    Button{
+    MainButton{
+        id: backButton
+        height: map.width/20
+        name: "back"
+        anchors.bottom: map.top
+        anchors.bottomMargin: map.width/30
+        anchors.right: map.left
+        anchors.rightMargin: map.width/30
+        anchors.left: parent.left
+        anchors.leftMargin: map.width/30
+    }
+
+    MainButton{
         id: goButton
-        height: 40
-        width: 40
-        text: "Go"
+        height: width
+        name: "Go"
         anchors.top: map.top
-        anchors.topMargin: height/2
+        anchors.topMargin: map.width/30
         anchors.left: map.right
-        anchors.leftMargin: height/2
+        anchors.leftMargin: map.width/30
+        anchors.right: parent.right
+        anchors.rightMargin: map.width/30
     }
 
     GameSpace{
@@ -33,6 +41,6 @@ Item {
         height: parent.height/4*3
         width: height
         anchors.centerIn: parent
-        blockSideSize: height/blocksCount
+        blockSideSize: height/blocksCount - shift
     }
 }

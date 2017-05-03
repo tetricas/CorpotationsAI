@@ -6,11 +6,11 @@
 class CLogic
 {
 public:
-    CLogic()
-    {}
-    EWinState checkGame(MyMapContainer map, QColor);
-    EPowerBoost ckeckBlock(int i, int j, MyMapContainer map,
-                           QColor myColor, EMapTypes myType);
+	CLogic()
+	{}
+	static EWinState checkGame(MyMapContainer map, QColor);
+	static EPowerBoost ckeckBlock(int i, int j, MyMapContainer map,
+								  QColor myColor, EMapTypes myType);
 };
 
 #endif // CLOGIC_H
