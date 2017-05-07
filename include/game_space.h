@@ -6,6 +6,8 @@
 #include <QPainter>
 
 #include "map_maker.h"
+#include "logic.h"
+#include "easy_bot.h"
 
 class CGameSpace : public QQuickPaintedItem
 {
@@ -13,6 +15,8 @@ class CGameSpace : public QQuickPaintedItem
 	Q_PROPERTY(int blockSideSize MEMBER m_blockSideSize)
 	Q_PROPERTY(int shift MEMBER m_shift CONSTANT)
 	Q_PROPERTY(int blocksCount READ blocksCount CONSTANT)
+
+    Q_PROPERTY(int power MEMBER m_power)
 
 public:
 	explicit CGameSpace(QQuickItem* parent = nullptr);
@@ -33,9 +37,14 @@ private:
 	int m_blocksCount;
 	int m_shift;
 	int m_iPosX;
-	int m_iPosY;
-	int m_alpha;
+    int m_iPosY;
+
+    QColor m_color;
+    EMapTypes m_resType;
+    int m_power;
+
 	CMapMaker m_map;
+    CEasyBot m_easyBot;
 };
 
 #endif // CGAMESPACE_H

@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-QT += qml quick network
+QT += qml quick
 CONFIG += c++11
 
 INCLUDEPATH += include
@@ -9,13 +9,15 @@ HEADERS += \
     include/enum_types.h \
     include/game_space.h \
     include/logic.h \
-    include/map_maker.h
+    include/map_maker.h \
+    include/easy_bot.h
 
 SOURCES += \
     src/game_space.cpp \
     src/logic.cpp \
     src/main.cpp \
-    src/map_maker.cpp
+    src/map_maker.cpp \
+    src/easy_bot.cpp
 
 RESOURCES += \
     rc/qml.qrc \

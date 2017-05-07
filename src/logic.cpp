@@ -19,28 +19,32 @@ EWinState CLogic::checkGame(MyMapContainer map, QColor myColor)
 		return eWS_lose;
 }
 
-EPowerBoost CLogic::ckeckBlock(int i, int j, MyMapContainer map,
-							   QColor myColor, EMapTypes myType)
+char CLogic::ckeckBlock(int i, int j, MyMapContainer map,
+                        QColor myColor, EMapTypes myType)
 {
+    char result = ePB_disabled;
 	if( (j+1 < map[i].size() && map[i][j+1].second != myColor)&&
 		(j > 0 &&  map[i][j-1].second != myColor) &&
 		(i+1 < map.size() && map[i+1][j].second != myColor)&&
 		(i > 0 && map[i-1][j].second != myColor))
-		return ePB_disabled;
+        return result;
 
-	if(map[i][j].second == myColor)
-		return ePB_foreign;
+    if(map[i][j].second != myColor)
+        result|=ePB_foreign;
+
 	if(map[i][j].first == eMT_gold ||
 	   map[i][j].first == eMT_silver ||
 	   map[i][j].first == eMT_cuper )
 	{
 		if( map[i][j].first == myType )
-			return ePB_yourMine;
+            result|=ePB_yourMine;
 		else
-			return ePB_badMine;
+            result|=ePB_badMine;
 	}
-	if(map[i][j].first == eMT_grass)
-		return ePB_grass;
+    else if(map[i][j].first == eMT_grass)
+        result|=ePB_grass;
+    else
+        result&=ePB_disabled;
 
-	return ePB_disabled;
+    return result;
 }

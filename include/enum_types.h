@@ -27,11 +27,11 @@ enum EWinState
 
 enum EPowerBoost
 {
-    ePB_disabled,
-    ePB_foreign,
-    ePB_grass,
-    ePB_badMine,
-    ePB_yourMine
+    ePB_disabled = 0,
+    ePB_foreign = 1,
+    ePB_grass = 2,
+    ePB_badMine = 4,
+    ePB_yourMine = 8
 };
 
 typedef QVector<QVector<QPair<EMapTypes, QColor>>> MyMapContainer ;
