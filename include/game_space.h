@@ -2,6 +2,7 @@
 #define CGAMESPACE_H
 
 #include <QtQuick/QQuickPaintedItem>
+#include <QQuickItem>
 #include <QMouseEvent>
 #include <QPainter>
 
@@ -16,35 +17,39 @@ class CGameSpace : public QQuickPaintedItem
 	Q_PROPERTY(int shift MEMBER m_shift CONSTANT)
 	Q_PROPERTY(int blocksCount READ blocksCount CONSTANT)
 
-    Q_PROPERTY(int power MEMBER m_power)
+	Q_PROPERTY(int power MEMBER m_power)
 
 public:
 	explicit CGameSpace(QQuickItem* parent = nullptr);
 
-	int blocksCount();
-
 	Q_INVOKABLE void setTurn();
+
+	int blocksCount();
 
 signals:
 	void blocksCountChanged();
+	void gameFinished(QColor winner);
+
+public slots:
+	void cellOwnerChanged(int i, int j, QColor oldColor, QColor newColor);
 
 protected:
 	virtual void paint(QPainter* painter);
-	virtual void mouseDoubleClickEvent(QMouseEvent* event);
+	virtual void mousePressEvent(QMouseEvent *event);
 
 private:
 	int m_blockSideSize;
 	int m_blocksCount;
 	int m_shift;
 	int m_iPosX;
-    int m_iPosY;
+	int m_iPosY;
 
-    QColor m_color;
-    EMapTypes m_resType;
-    int m_power;
+	QColor m_color;
+	EMapTypes m_type;
+	int m_power;
 
 	CMapMaker m_map;
-    CEasyBot m_easyBot;
+	CEasyBot m_easyBot;
 };
 
 #endif // CGAMESPACE_H

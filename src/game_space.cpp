@@ -9,23 +9,57 @@ CGameSpace::CGameSpace(QQuickItem* parent):
 	m_blockSideSize(1),
 	m_shift(1),
 	m_iPosX(0),
-    m_iPosY(0),
-    m_color(QColor(255, 0, 0, 128)),
-    m_resType(eMT_gold),
-    m_power(1),
-    m_blocksCount(10),
-    m_easyBot(&m_map, QColor(0, 255, 0, 128), eMT_silver)
+	m_iPosY(0),
+	m_color(QColor(255, 0, 0, 100)),
+	m_type(eMT_gold),
+	m_power(1),
+	m_blocksCount(10),
+	m_easyBot(&m_map, QColor(0, 0, 255, 100), eMT_silver)
 {
 	setAcceptedMouseButtons(Qt::AllButtons);
 
-    quint8 iRand = qrand()%10, jRand = qrand()%10;
-    while(m_gameLogic.ckeckBlock(m_iPosX,m_iPosY,m_map,m_color, m_type) != ePB_grass)
-        iRand = qrand()%10, jRand = qrand()%10;
-    m_map.paintBlock(iRand, jRand, m_color);
+	qsrand(QDateTime::currentMSecsSinceEpoch() / 1000);;
+	quint8 iRand = qrand()%10+0, jRand = qrand()%10+0;
+	while((CLogic::checkBlock(iRand,jRand,m_map,m_color, m_type)&ePB_grass) != ePB_grass)
+	{
+		iRand = qrand()%10+0;
+		jRand = qrand()%10+0;
+	}
+	m_map.paintBlock(iRand, jRand, m_color);
 
-    while(m_gameLogic.ckeckBlock(m_iPosX,m_iPosY,m_map,m_easyBot.getColor(), m_easyBot.getType()) != ePB_grass)
-        iRand = qrand()%10, jRand = qrand()%10;
-    m_map.paintBlock(iRand, jRand, m_easyBot.getColor());
+	while(((CLogic::checkBlock(iRand,jRand,m_map,m_easyBot.getColor(), m_easyBot.getType())&ePB_grass) != ePB_grass) ||
+		  ((CLogic::checkBlock(iRand,jRand,m_map,m_easyBot.getColor(), m_easyBot.getType())&ePB_foreign) == ePB_foreign))
+	{
+		iRand = qrand()%10+0;
+		jRand = qrand()%10+0;
+	}
+	m_map.paintBlock(iRand, jRand, m_easyBot.getColor());
+
+	connect(&m_easyBot , &CEasyBot::cellWasCaptured, this, &CGameSpace::cellOwnerChanged);
+}
+
+void CGameSpace::setTurn()
+{
+	char checked = CLogic::checkTurn(m_iPosX,m_iPosY,m_map,m_color, m_type);
+
+	if((int)checked==ePB_disabled)
+		return;
+
+	if(((checked&ePB_foreign)==ePB_foreign)&&(m_power < m_easyBot.getPower()))
+		return;
+
+	int cellPower = 0;
+	if((checked&ePB_grass) == ePB_grass)
+		cellPower+=1;
+	else if((checked&ePB_badMine) == ePB_badMine )
+		cellPower+=2;
+	else if((checked&ePB_yourMine) == ePB_yourMine)
+		cellPower+=3;
+
+	m_power += cellPower;
+	cellOwnerChanged(m_iPosX, m_iPosY, m_map.getBlock(m_iPosX, m_iPosY).second, m_color);
+
+	m_easyBot.makeTurn();
 }
 
 int CGameSpace::blocksCount()
@@ -33,30 +67,18 @@ int CGameSpace::blocksCount()
 	return m_blocksCount;
 }
 
-void CGameSpace::setTurn()
+void CGameSpace::cellOwnerChanged(int i, int j, QColor oldColor, QColor newColor)
 {
-    char checked = m_gameLogic.ckeckBlock(m_iPosX,m_iPosY,m_map,m_color, m_type);
+	if(oldColor == m_color)
+		m_power += CLogic::calculatePower(i, j, m_map, m_type);
+	if(oldColor == m_easyBot.getColor())
+		m_easyBot.takeAwayPower(i, j);
 
-    if(checked&ePB_disabled!=ePB_disabled)
-        return;
-
-    if((checked&ePB_foreign==ePB_foreign)&&(m_power < m_easyBot.getPower()))
-        return;
-
-    int cellPower = 0;
-    if(checked&ePB_grass == ePB_grass)
-        cellPower+=1;
-    else if(checked&ePB_badMine == ePB_badMine )
-        cellPower+=2;
-    else if(checked&ePB_yourMine == ePB_yourMine)
-        cellPower+=3;
-
-    m_map.paintBlock(m_iPosX, m_iPosY, m_color);
-    m_power += cellPower;
-    if(checked&ePB_foreign==ePB_foreign)
-        m_easyBot.takeAwayPower(cellPower);
-
+	m_map.paintBlock(i, j, newColor);
 	update();
+
+	if(CLogic::checkGame(m_map,newColor) == eWS_win)
+		emit gameFinished(newColor);
 }
 
 void CGameSpace::paint(QPainter* painter)
@@ -107,7 +129,7 @@ void CGameSpace::paint(QPainter* painter)
 	painter->drawRect(m_iPosX*m_blockSideSize + fieldShift, m_iPosY*m_blockSideSize + fieldShift, m_blockSideSize, m_blockSideSize);
 }
 
-void CGameSpace::mouseDoubleClickEvent(QMouseEvent* event)
+void CGameSpace::mousePressEvent(QMouseEvent* event)
 {
 	m_iPosX = int(event->localPos().x())/m_blockSideSize;
 	m_iPosY = int(event->localPos().y())/m_blockSideSize;

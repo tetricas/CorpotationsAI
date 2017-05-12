@@ -2,6 +2,7 @@
 #define CMAPMAKER_H
 
 #include <QString>
+#include <QDateTime>
 
 #include "enum_types.h"
 
@@ -13,6 +14,7 @@ public:
 	QPair<EMapTypes, QColor> getBlock(int i, int j) const;
 	void setBlock(int i, int j, EMapTypes type);
 	void paintBlock(int i, int j, QColor color);
+	int getSize();
 
 private:
 	void makeNew();

@@ -43,11 +43,22 @@ Dialog {
 
         backButton.onClicked:dialogStackView.push(startItem);
         goButton.onClicked: map.setTurn();
+        map.onGameFinished:
+        {
+            console.log(winner)
+            winMsg.text = winner+ "win"
+            winMsg.open()
+        }
     }
 
     AboutDialog{
         id: aboutDlg
         height: 500
         width: 400
+    }
+
+    MessageDialog  {
+        id: winMsg
+        title: "Game finished"
     }
 }

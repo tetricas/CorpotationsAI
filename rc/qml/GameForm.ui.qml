@@ -36,6 +36,7 @@ Item {
         anchors.rightMargin: map.width/30
     }
 
+
     GameSpace{
         id: map
         height: parent.height/4*3
@@ -43,4 +44,5 @@ Item {
         anchors.centerIn: parent
         blockSideSize: height/blocksCount - shift
     }
+
 }
