@@ -1,12 +1,12 @@
-#include "easy_bot.h"
+#include "clever_bot.h"
 #include "logic.h"
 #include <QtDebug>
 
-CEasyBot::CEasyBot(CMapMaker *map, QColor color, EMapTypes type, QObject *parent) :
+CCleverBot::CCleverBot(CMapMaker *map, QColor color, EMapTypes type, QObject *parent) :
 	CBaseBot(map, color, type, parent)
 {}
 
-void CEasyBot::makeTurn()
+void CCleverBot::makeTurn()
 {
 	qsrand(QDateTime::currentMSecsSinceEpoch() / 1000);
 	auto vector = getEnabledFields();

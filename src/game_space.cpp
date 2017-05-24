@@ -7,14 +7,14 @@
 CGameSpace::CGameSpace(QQuickItem* parent):
 	QQuickPaintedItem(parent),
 	m_blockSideSize(1),
+	m_blocksCount(10),
 	m_shift(1),
 	m_iPosX(0),
 	m_iPosY(0),
 	m_color(QColor(255, 0, 0, 100)),
 	m_type(eMT_gold),
-	m_power(1),
-	m_blocksCount(10),
-	m_easyBot(&m_map, QColor(0, 0, 255, 100), eMT_silver)
+	m_easyBot(&m_map, QColor(0, 255, 0, 100), eMT_silver),
+	m_cleverBot(&m_map, QColor(0, 0, 255, 100), eMT_cuper)
 {
 	setAcceptedMouseButtons(Qt::AllButtons);
 
@@ -26,6 +26,7 @@ CGameSpace::CGameSpace(QQuickItem* parent):
 		jRand = qrand()%10+0;
 	}
 	m_map.paintBlock(iRand, jRand, m_color);
+	m_map.addNewPower(m_type);
 
 	while(((CLogic::checkBlock(iRand,jRand,m_map,m_easyBot.getColor(), m_easyBot.getType())&ePB_grass) != ePB_grass) ||
 		  ((CLogic::checkBlock(iRand,jRand,m_map,m_easyBot.getColor(), m_easyBot.getType())&ePB_foreign) == ePB_foreign))
@@ -34,32 +35,33 @@ CGameSpace::CGameSpace(QQuickItem* parent):
 		jRand = qrand()%10+0;
 	}
 	m_map.paintBlock(iRand, jRand, m_easyBot.getColor());
+	m_map.addNewPower(m_easyBot.getType());
+
+	while(((CLogic::checkBlock(iRand,jRand,m_map,m_cleverBot.getColor(), m_cleverBot.getType())&ePB_grass) != ePB_grass) ||
+		  ((CLogic::checkBlock(iRand,jRand,m_map,m_cleverBot.getColor(), m_cleverBot.getType())&ePB_foreign) == ePB_foreign))
+	{
+		iRand = qrand()%10+0;
+		jRand = qrand()%10+0;
+	}
+	m_map.paintBlock(iRand, jRand, m_cleverBot.getColor());
+	m_map.addNewPower(m_cleverBot.getType());
 
 	connect(&m_easyBot , &CEasyBot::cellWasCaptured, this, &CGameSpace::cellOwnerChanged);
+	connect(&m_cleverBot , &CEasyBot::cellWasCaptured, this, &CGameSpace::cellOwnerChanged);
 }
 
 void CGameSpace::setTurn()
 {
 	char checked = CLogic::checkTurn(m_iPosX,m_iPosY,m_map,m_color, m_type);
 
-	if((int)checked==ePB_disabled)
+	if(checked == ePB_disabled)
 		return;
 
-	if(((checked&ePB_foreign)==ePB_foreign)&&(m_power < m_easyBot.getPower()))
-		return;
-
-	int cellPower = 0;
-	if((checked&ePB_grass) == ePB_grass)
-		cellPower+=1;
-	else if((checked&ePB_badMine) == ePB_badMine )
-		cellPower+=2;
-	else if((checked&ePB_yourMine) == ePB_yourMine)
-		cellPower+=3;
-
-	m_power += cellPower;
+	CLogic::increasePower(checked, m_map, m_type);
 	cellOwnerChanged(m_iPosX, m_iPosY, m_map.getBlock(m_iPosX, m_iPosY).second, m_color);
 
 	m_easyBot.makeTurn();
+	m_cleverBot.makeTurn();
 }
 
 int CGameSpace::blocksCount()
@@ -70,12 +72,15 @@ int CGameSpace::blocksCount()
 void CGameSpace::cellOwnerChanged(int i, int j, QColor oldColor, QColor newColor)
 {
 	if(oldColor == m_color)
-		m_power += CLogic::calculatePower(i, j, m_map, m_type);
-	if(oldColor == m_easyBot.getColor())
-		m_easyBot.takeAwayPower(i, j);
+		CLogic::decreasePower(i, j, m_map, m_type);
+	else if(oldColor == m_easyBot.getColor())
+		CLogic::decreasePower(i, j, m_map, m_easyBot.getType());
+	else if(oldColor == m_cleverBot.getColor())
+		CLogic::decreasePower(i, j, m_map, m_cleverBot.getType());
 
 	m_map.paintBlock(i, j, newColor);
 	update();
+	emit updateScore(m_map.getPower(m_type), m_map.getPower(m_easyBot.getType()), m_map.getPower(m_cleverBot.getType()));
 
 	if(CLogic::checkGame(m_map,newColor) == eWS_win)
 		emit gameFinished(newColor);
@@ -133,5 +138,6 @@ void CGameSpace::mousePressEvent(QMouseEvent* event)
 {
 	m_iPosX = int(event->localPos().x())/m_blockSideSize;
 	m_iPosY = int(event->localPos().y())/m_blockSideSize;
-	update();
+	if(m_iPosX<10 && m_iPosY<10)
+		update();
 }

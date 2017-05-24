@@ -6,6 +6,9 @@ Item {
     property alias backButton: backButton
     property alias goButton: goButton
     property alias map: map
+    property alias scoreYouText: scoreYou.text
+    property alias scoreBot1Text: scoreBot1.text
+    property alias scoreBot2Text: scoreBot2.text
 
     Rectangle{
         anchors.fill: parent
@@ -22,6 +25,36 @@ Item {
         anchors.rightMargin: map.width/30
         anchors.left: parent.left
         anchors.leftMargin: map.width/30
+    }
+
+    Text{
+        id: scoreYou
+        text: ""
+        color: "#00A53A"
+        font.pointSize: 22
+        anchors.left: map.left
+        anchors.bottom: map.top
+        anchors.bottomMargin: map.width/30
+    }
+
+    Text{
+        id: scoreBot1
+        text: ""
+        color: "#00A53A"
+        font.pointSize: 22
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: map.top
+        anchors.bottomMargin: map.width/30
+    }
+
+    Text{
+        id: scoreBot2
+        text: ""
+        color: "#00A53A"
+        font.pointSize: 22
+        anchors.right: map.right
+        anchors.bottom: map.top
+        anchors.bottomMargin: map.width/30
     }
 
     MainButton{

@@ -18,8 +18,8 @@ Dialog {
     contentItem: StackView {
         id: dialogStackView
 
-        width: parent.width
-        height: parent.height
+        width: mainWin.width
+        height: mainWin.height
 
         pushEnter: Transition {}
         popEnter: Transition {}
@@ -41,13 +41,20 @@ Dialog {
     GameForm{
         id: game
 
-        backButton.onClicked:dialogStackView.push(startItem);
+        backButton.onClicked: dialogStackView.pop();
         goButton.onClicked: map.setTurn();
         map.onGameFinished:
         {
             console.log(winner)
             winMsg.text = winner+ "win"
             winMsg.open()
+            dialogStackView.pop();
+        }
+        map.onUpdateScore:
+        {
+            scoreYouText = "You: " + player
+            scoreBot1Text = " Clac: " + firstBot
+            scoreBot2Text = " Cloc: " + secondBot
         }
     }
 

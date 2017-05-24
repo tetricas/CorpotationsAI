@@ -28,7 +28,12 @@ int CLogic::checkTurn(int i, int j, CMapMaker map, QColor myColor, EMapTypes myT
 	   map.getBlock(i,j).second == myColor)
 		return ePB_disabled;
 
-	return CLogic::checkBlock(i, j, map, myColor, myType);
+	char checked = CLogic::checkBlock(i, j, map, myColor, myType);
+
+	if(((checked&ePB_foreign)==ePB_foreign)&&(map.getPower(myType) < map.getPower(i, j)))
+		return ePB_disabled;
+
+	return checked;
 }
 
 int CLogic::checkBlock(int i, int j, CMapMaker map, QColor myColor, EMapTypes myType)
@@ -56,7 +61,7 @@ int CLogic::checkBlock(int i, int j, CMapMaker map, QColor myColor, EMapTypes my
 	return result;
 }
 
-int CLogic::calculatePower(int i, int j, CMapMaker map, EMapTypes myType)
+void CLogic::decreasePower(int i, int j, CMapMaker map, EMapTypes myType)
 {
 	int power = 0;
 	EMapTypes type = map.getBlock(i,j).first;
@@ -69,5 +74,18 @@ int CLogic::calculatePower(int i, int j, CMapMaker map, EMapTypes myType)
 	if(type == eMT_grass)
 		power-=1;
 
-	return power;
+	map.changePower(myType, power);
+}
+
+void CLogic::increasePower(char checked, CMapMaker map, EMapTypes myType)
+{
+	int power = 0;
+	if((checked&ePB_grass) == ePB_grass)
+		power+=1;
+	else if((checked&ePB_badMine) == ePB_badMine )
+		power+=2;
+	else if((checked&ePB_yourMine) == ePB_yourMine)
+		power+=3;
+
+	map.changePower(myType, power);
 }

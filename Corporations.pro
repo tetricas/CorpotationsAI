@@ -10,14 +10,18 @@ HEADERS += \
     include/game_space.h \
     include/logic.h \
     include/map_maker.h \
-    include/easy_bot.h
+    include/easy_bot.h \
+    include/clever_bot.h \
+    include/base_bot.h
 
 SOURCES += \
     src/game_space.cpp \
     src/logic.cpp \
     src/main.cpp \
     src/map_maker.cpp \
-    src/easy_bot.cpp
+    src/easy_bot.cpp \
+    src/clever_bot.cpp \
+    src/base_bot.cpp
 
 RESOURCES += \
     rc/qml.qrc \

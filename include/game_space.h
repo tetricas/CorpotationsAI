@@ -9,6 +9,7 @@
 #include "map_maker.h"
 #include "logic.h"
 #include "easy_bot.h"
+#include "clever_bot.h"
 
 class CGameSpace : public QQuickPaintedItem
 {
@@ -16,8 +17,6 @@ class CGameSpace : public QQuickPaintedItem
 	Q_PROPERTY(int blockSideSize MEMBER m_blockSideSize)
 	Q_PROPERTY(int shift MEMBER m_shift CONSTANT)
 	Q_PROPERTY(int blocksCount READ blocksCount CONSTANT)
-
-	Q_PROPERTY(int power MEMBER m_power)
 
 public:
 	explicit CGameSpace(QQuickItem* parent = nullptr);
@@ -29,6 +28,7 @@ public:
 signals:
 	void blocksCountChanged();
 	void gameFinished(QColor winner);
+	void updateScore(int player, int firstBot, int secondBot);
 
 public slots:
 	void cellOwnerChanged(int i, int j, QColor oldColor, QColor newColor);
@@ -46,10 +46,10 @@ private:
 
 	QColor m_color;
 	EMapTypes m_type;
-	int m_power;
 
 	CMapMaker m_map;
 	CEasyBot m_easyBot;
+	CCleverBot m_cleverBot;
 };
 
 #endif // CGAMESPACE_H

@@ -81,3 +81,27 @@ int CMapMaker::getSize()
 {
 	return m_size;
 }
+
+void CMapMaker::addNewPower(EMapTypes type)
+{
+	m_powerMatches[type] = 1;
+	qDebug() << "addNewPower[" << type << "]" << m_powerMatches[type];
+}
+
+int CMapMaker::getPower(EMapTypes type)
+{
+	qDebug() << "getPower[" << type << "]" << m_powerMatches[type];
+	return m_powerMatches[type];
+}
+
+int CMapMaker::getPower(int i, int j)
+{
+	qDebug() << "getPower[" << i << "," << j << "]" << m_powerMatches[m_map[i][j].first];
+	return m_powerMatches[m_map[i][j].first];
+}
+
+void CMapMaker::changePower(EMapTypes type, int powerDelta)
+{
+	m_powerMatches[type] += powerDelta;
+	qDebug() << "changePower[" << type << "]" << m_powerMatches[type];
+}
