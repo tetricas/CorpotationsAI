@@ -77,31 +77,33 @@ void CMapMaker::paintBlock(int i, int j, QColor color)
 	m_map[i][j].second = color;
 }
 
-int CMapMaker::getSize()
+int CMapMaker::getSize() const
 {
 	return m_size;
 }
 
 void CMapMaker::addNewPower(EMapTypes type)
 {
-	m_powerMatches[type] = 1;
-	qDebug() << "addNewPower[" << type << "]" << m_powerMatches[type];
+	m_powerMatches.insert(type, 1);
 }
 
-int CMapMaker::getPower(EMapTypes type)
+int CMapMaker::getPower(EMapTypes type) const
 {
-	qDebug() << "getPower[" << type << "]" << m_powerMatches[type];
-	return m_powerMatches[type];
+	return m_powerMatches.value(type);
 }
 
-int CMapMaker::getPower(int i, int j)
+int CMapMaker::getPower(int i, int j) const
 {
-	qDebug() << "getPower[" << i << "," << j << "]" << m_powerMatches[m_map[i][j].first];
-	return m_powerMatches[m_map[i][j].first];
+	if(m_map[i][j].second == QColor(255,0,0,100))
+		return m_powerMatches.value(eMT_gold);
+	else if(m_map[i][j].second == QColor(0,255,0,100))
+		return m_powerMatches.value(eMT_silver);
+	else if(m_map[i][j].second == QColor(0,0,255,100))
+		return m_powerMatches.value(eMT_cuper);
+	return 0;
 }
 
 void CMapMaker::changePower(EMapTypes type, int powerDelta)
 {
-	m_powerMatches[type] += powerDelta;
-	qDebug() << "changePower[" << type << "]" << m_powerMatches[type];
+	m_powerMatches.insert(type, m_powerMatches.value(type) + powerDelta);
 }

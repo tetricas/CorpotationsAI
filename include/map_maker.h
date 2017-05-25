@@ -16,11 +16,11 @@ public:
 	void setBlock(int i, int j, EMapTypes type);
 	void paintBlock(int i, int j, QColor color);
 
-	int getSize();
+	int getSize() const;
 
 	void addNewPower(EMapTypes type);
-	int getPower(EMapTypes type);
-	int getPower(int i, int j);
+	int getPower(EMapTypes type) const;
+	int getPower(int i, int j) const;
 	void changePower(EMapTypes type, int powerDelta);
 
 private:

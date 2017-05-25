@@ -4,7 +4,7 @@
 #include <QColor>
 #include <QtDebug>
 
-EWinState CLogic::checkGame(CMapMaker map, QColor myColor)
+EWinState CLogic::checkGame(const CMapMaker& map, QColor myColor)
 {
 	QVector<QColor> vec;
 	for(int i(0); i < map.getSize(); ++i)
@@ -19,7 +19,7 @@ EWinState CLogic::checkGame(CMapMaker map, QColor myColor)
 		return eWS_lose;
 }
 
-int CLogic::checkTurn(int i, int j, CMapMaker map, QColor myColor, EMapTypes myType)
+int CLogic::checkTurn(int i, int j, const CMapMaker& map, QColor myColor, EMapTypes myType)
 {
 	if(((j+1 < map.getSize() && map.getBlock(i,j+1).second != myColor)&&
 	   (j > 0 && map.getBlock(i,j-1).second != myColor) &&
@@ -36,7 +36,7 @@ int CLogic::checkTurn(int i, int j, CMapMaker map, QColor myColor, EMapTypes myT
 	return checked;
 }
 
-int CLogic::checkBlock(int i, int j, CMapMaker map, QColor myColor, EMapTypes myType)
+int CLogic::checkBlock(int i, int j, const CMapMaker& map, QColor myColor, EMapTypes myType)
 {
 	int result = ePB_disabled;
 
@@ -61,7 +61,7 @@ int CLogic::checkBlock(int i, int j, CMapMaker map, QColor myColor, EMapTypes my
 	return result;
 }
 
-void CLogic::decreasePower(int i, int j, CMapMaker map, EMapTypes myType)
+void CLogic::decreasePower(int i, int j, CMapMaker& map, EMapTypes myType)
 {
 	int power = 0;
 	EMapTypes type = map.getBlock(i,j).first;
@@ -77,7 +77,7 @@ void CLogic::decreasePower(int i, int j, CMapMaker map, EMapTypes myType)
 	map.changePower(myType, power);
 }
 
-void CLogic::increasePower(char checked, CMapMaker map, EMapTypes myType)
+void CLogic::increasePower(char checked, CMapMaker& map, EMapTypes myType)
 {
 	int power = 0;
 	if((checked&ePB_grass) == ePB_grass)
