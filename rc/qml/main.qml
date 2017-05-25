@@ -14,13 +14,12 @@ Dialog {
 
     property alias startItem: start
     property alias gameItem: game
-    property alias connectItem: connect
 
     contentItem: StackView {
         id: dialogStackView
 
-        width: parent.width
-        height: parent.height
+        width: mainWin.width
+        height: mainWin.height
 
         pushEnter: Transition {}
         popEnter: Transition {}
@@ -33,13 +32,8 @@ Dialog {
     MainForm {
         id: start
 
-        startBtn.visible: game.map.isConnected
         startBtn.onClicked: dialogStackView.push(gameItem)
 
-        reconnectBtn.visible: !game.map.isConnected
-        reconnectBtn.onClicked: game.map.reconnect();
-
-        connectBtn.onClicked: dialogStackView.push(connectItem)
         aboutBtn.onClicked: aboutDlg.open()
         exitBtn.onClicked: close()
     }
@@ -47,20 +41,31 @@ Dialog {
     GameForm{
         id: game
 
-        backButton.onClicked:dialogStackView.push(startItem);
+        backButton.onClicked: dialogStackView.pop();
         goButton.onClicked: map.setTurn();
-    }
-
-    ConnectForm{
-        id: connect
-
-        backButton.onClicked: dialogStackView.push(startItem)
-        serverButton.onClicked: game.map.makeServer();
+        map.onGameFinished:
+        {
+            console.log(winner)
+            winMsg.text = winner+ "win"
+            winMsg.open()
+            dialogStackView.pop();
+        }
+        map.onUpdateScore:
+        {
+            scoreYouText = "You: " + player
+            scoreBot1Text = " Clac: " + firstBot
+            scoreBot2Text = " Cloc: " + secondBot
+        }
     }
 
     AboutDialog{
         id: aboutDlg
         height: 500
         width: 400
+    }
+
+    MessageDialog  {
+        id: winMsg
+        title: "Game finished"
     }
 }

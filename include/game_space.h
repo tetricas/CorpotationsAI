@@ -2,47 +2,54 @@
 #define CGAMESPACE_H
 
 #include <QtQuick/QQuickPaintedItem>
+#include <QQuickItem>
 #include <QMouseEvent>
 #include <QPainter>
 
-#include "client.h"
-#include "server.h"
+#include "map_maker.h"
+#include "logic.h"
+#include "easy_bot.h"
+#include "clever_bot.h"
 
 class CGameSpace : public QQuickPaintedItem
 {
-    Q_OBJECT
-    Q_PROPERTY(int blockSideSize WRITE setBlockSideSize)
-    Q_PROPERTY(int blocksCount READ blocksCount CONSTANT)
-    Q_PROPERTY(bool isConnected READ isConnected NOTIFY isConnectedChanged)
+	Q_OBJECT
+	Q_PROPERTY(int blockSideSize MEMBER m_blockSideSize)
+	Q_PROPERTY(int shift MEMBER m_shift CONSTANT)
+	Q_PROPERTY(int blocksCount READ blocksCount CONSTANT)
 
 public:
-    explicit CGameSpace(QQuickItem* parent = nullptr);
+	explicit CGameSpace(QQuickItem* parent = nullptr);
 
-    void setBlockSideSize(int sideSize);
-    int blocksCount();
-    bool isConnected();
+	Q_INVOKABLE void setTurn();
 
-    Q_INVOKABLE void setTurn();
-    Q_INVOKABLE void reconnect();
-    Q_INVOKABLE void makeServer();
+	int blocksCount();
 
 signals:
-    void blocksCountChanged();
-    void isConnectedChanged();
+	void blocksCountChanged();
+	void gameFinished(QColor winner);
+	void updateScore(int player, int firstBot, int secondBot);
+
+public slots:
+	void cellOwnerChanged(int i, int j, QColor oldColor, QColor newColor);
 
 protected:
-    virtual void paint(QPainter* painter);
-    virtual void mouseReleaseEvent(QMouseEvent* event);
+	virtual void paint(QPainter* painter);
+	virtual void mousePressEvent(QMouseEvent *event);
 
 private:
-    CClient m_map;
-    CServer* m_server;
-    int m_blockSideSize;
-    int m_blocksCount;
-    int m_iPosX;
-    int m_iPosY;
-    int m_alpha;
-    bool m_isConnected;
+	int m_blockSideSize;
+	int m_blocksCount;
+	int m_shift;
+	int m_iPosX;
+	int m_iPosY;
+
+	QColor m_color;
+	EMapTypes m_type;
+
+	CMapMaker m_map;
+	CEasyBot m_easyBot;
+	CCleverBot m_cleverBot;
 };
 
 #endif // CGAMESPACE_H

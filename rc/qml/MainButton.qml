@@ -1,19 +1,12 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
 
-Button{
+Item{
     property alias name: name.text
+    signal clicked
 
     Rectangle{
-        color:parent.parent.color
-        y: parent.top - 10
-        x: parent.left - 10
-        height: parent.height + 10
-        width: parent.width + 10
-    }
-
-    Rectangle{
-        color:"#C6C0C0"
+        color:"#036D19"
         anchors.fill: parent
         radius: height/2
         width: parent.width
@@ -21,9 +14,14 @@ Button{
 
     Text{
         id: name
-        color: "#3F903D"
+        color: "#1D263B"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         font.pixelSize: parent.height/2
+    }
+
+    MouseArea{
+        anchors.fill: parent
+        onClicked: parent.clicked()
     }
 }

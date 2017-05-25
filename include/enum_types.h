@@ -7,31 +7,31 @@
 
 enum EMapTypes
 {
-    eMT_gold,
-    eMT_silver,
-    eMT_cuper,
+	eMT_gold = 0,
+	eMT_silver = 1,
+	eMT_cuper = 2,
 
-    eMT_mountain,
-    eMT_rock,
-    eMT_tree,
+	eMT_mountain = 3,
+	eMT_rock = 4,
+	eMT_tree = 5,
 
-    eMT_grass
+	eMT_grass = 6
 };
 
 enum EWinState
 {
-    eWS_win,
-    eWS_lose,
-    eWS_continue
+	eWS_win,
+	eWS_lose,
+	eWS_continue
 };
 
 enum EPowerBoost
 {
-    ePB_disabled,
-    ePB_foreign,
-    ePB_grass,
-    ePB_badMine,
-    ePB_yourMine
+	ePB_disabled = 0,
+	ePB_foreign = 1,
+	ePB_grass = 2,
+	ePB_badMine = 4,
+	ePB_yourMine = 8
 };
 
 typedef QVector<QVector<QPair<EMapTypes, QColor>>> MyMapContainer ;

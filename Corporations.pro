@@ -1,25 +1,27 @@
 TEMPLATE = app
 
-QT += qml quick network
+QT += qml quick
 CONFIG += c++11
 
 INCLUDEPATH += include
 
 HEADERS += \
-    include/client.h \
     include/enum_types.h \
     include/game_space.h \
     include/logic.h \
     include/map_maker.h \
-    include/server.h
+    include/easy_bot.h \
+    include/clever_bot.h \
+    include/base_bot.h
 
 SOURCES += \
-    src/client.cpp \
     src/game_space.cpp \
     src/logic.cpp \
     src/main.cpp \
     src/map_maker.cpp \
-    src/server.cpp
+    src/easy_bot.cpp \
+    src/clever_bot.cpp \
+    src/base_bot.cpp
 
 RESOURCES += \
     rc/qml.qrc \
