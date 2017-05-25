@@ -7,6 +7,37 @@ CMapMaker::CMapMaker():
 	makeNew();
 }
 
+CMapMaker::CMapMaker(const CMapMaker& map)
+{
+	m_size = map.getSize();
+	for( int i(0); i< m_size; ++i)
+	{
+		QVector<QPair<EMapTypes, QColor>> line;
+		for( int j(0); j< m_size; ++j)
+			line.push_back(map.getBlock(i,j));
+
+		m_map.push_back(line);
+	}
+}
+
+CMapMaker& CMapMaker::operator=(const CMapMaker & map)
+{
+	if (this != &map)
+	{
+		m_map.clear();
+		m_size = map.getSize();
+		for( int i(0); i< m_size; ++i)
+		{
+			QVector<QPair<EMapTypes, QColor>> line;
+			for( int j(0); j< m_size; ++j)
+				line.push_back(map.getBlock(i,j));
+
+			m_map.push_back(line);
+		}
+	}
+	return *this;
+}
+
 void CMapMaker::makeNew()
 {
 	qsrand(QDateTime::currentMSecsSinceEpoch() / 1000);;

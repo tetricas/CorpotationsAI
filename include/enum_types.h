@@ -34,6 +34,7 @@ enum EPowerBoost
 	ePB_yourMine = 8
 };
 
+#define MAX_POWER 3
 typedef QVector<QVector<QPair<EMapTypes, QColor>>> MyMapContainer ;
 
 #endif // ENUM_TYPES_H

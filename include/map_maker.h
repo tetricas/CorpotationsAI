@@ -11,6 +11,8 @@ class CMapMaker
 {
 public:
 	explicit CMapMaker();
+	CMapMaker(const CMapMaker& map);
+	CMapMaker& operator=(const CMapMaker & map);
 
 	QPair<EMapTypes, QColor> getBlock(int i, int j) const;
 	void setBlock(int i, int j, EMapTypes type);

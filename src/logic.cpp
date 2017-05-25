@@ -66,13 +66,13 @@ void CLogic::decreasePower(int i, int j, CMapMaker& map, EMapTypes myType)
 	int power = 0;
 	EMapTypes type = map.getBlock(i,j).first;
 	if(type == myType)
-		power-=3;
+		power-=MAX_POWER;
 	if((myType != eMT_gold&&type == eMT_gold)||
 	   (myType != eMT_silver&&type == eMT_silver)||
 	   (myType != eMT_cuper&&type == eMT_cuper))
-		power-=2;
+		power-=(MAX_POWER-1);
 	if(type == eMT_grass)
-		power-=1;
+		power-=(MAX_POWER-2);
 
 	map.changePower(myType, power);
 }
@@ -81,11 +81,11 @@ void CLogic::increasePower(char checked, CMapMaker& map, EMapTypes myType)
 {
 	int power = 0;
 	if((checked&ePB_grass) == ePB_grass)
-		power+=1;
+		power+=(MAX_POWER-2);
 	else if((checked&ePB_badMine) == ePB_badMine )
-		power+=2;
+		power+=(MAX_POWER-1);
 	else if((checked&ePB_yourMine) == ePB_yourMine)
-		power+=3;
+		power+=MAX_POWER;
 
 	map.changePower(myType, power);
 }
