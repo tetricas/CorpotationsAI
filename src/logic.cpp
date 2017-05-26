@@ -61,10 +61,10 @@ int CLogic::checkBlock(int i, int j, const CMapMaker& map, QColor myColor, EMapT
 	return result;
 }
 
-void CLogic::decreasePower(int i, int j, CMapMaker& map, EMapTypes myType)
+void CLogic::decreasePower(int i, int j, CMapMaker* map, EMapTypes myType)
 {
 	int power = 0;
-	EMapTypes type = map.getBlock(i,j).first;
+    EMapTypes type = map->getBlock(i,j).first;
 	if(type == myType)
 		power-=MAX_POWER;
 	if((myType != eMT_gold&&type == eMT_gold)||
@@ -74,10 +74,10 @@ void CLogic::decreasePower(int i, int j, CMapMaker& map, EMapTypes myType)
 	if(type == eMT_grass)
 		power-=(MAX_POWER-2);
 
-	map.changePower(myType, power);
+    map->changePower(myType, power);
 }
 
-void CLogic::increasePower(char checked, CMapMaker& map, EMapTypes myType)
+void CLogic::increasePower(char checked, CMapMaker* map, EMapTypes myType)
 {
 	int power = 0;
 	if((checked&ePB_grass) == ePB_grass)
@@ -87,5 +87,5 @@ void CLogic::increasePower(char checked, CMapMaker& map, EMapTypes myType)
 	else if((checked&ePB_yourMine) == ePB_yourMine)
 		power+=MAX_POWER;
 
-	map.changePower(myType, power);
+    map->changePower(myType, power);
 }

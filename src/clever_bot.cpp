@@ -7,45 +7,65 @@ CCleverBot::CCleverBot(CMapMaker *map, QColor color, EMapTypes type, QObject *pa
 	m_searchAreaSize(3),
 	m_maxPower(0),
 	m_isOnWay(false),
-	m_path(m_map->getSize()),
+    m_path(),
 	m_grid(m_map->getSize(),QVector<int>(m_map->getSize())),
-	WALL(-1),
-	BLANK(-2)
+    m_pathLength(0),
+    m_currentStep(0),
+    m_disable(-1),
+    m_empty(-2)
 {
 }
 
 void CCleverBot::makeTurn()
 {
-	char checked = 0;
 	m_rejectedCells.clear();
-	do
-	{
-		findTarget(checked);
-		findStart();
-		prepareGrid();
-	}while(!leeAlgorithm());
+    QPair<int, int> nextStep;
+    if(!m_isOnWay)
+    {
+        m_loseCounter = 0;
+        do
+        {
+            m_isOnWay = true;
+            m_path.clear();
+            findTarget();
+            findStart();
+            prepareGrid();
+            m_currentStep = 0;
 
-	CLogic::increasePower(checked, *m_map, m_type);
-	emit cellWasCaptured(m_targetCell.first, m_targetCell.second,
-						 m_map->getBlock(m_targetCell.first, m_targetCell.second).second, m_color);
+            if(m_loseCounter++ > 100)
+                return;
+        }while(!leeAlgorithm());
+    }
+
+    if(m_currentStep == m_path.size())
+        return;
+    nextStep = m_path.at(m_currentStep++);
+    if(m_currentStep == m_pathLength)
+        m_isOnWay = false;
+
+    CLogic::increasePower(CLogic::checkTurn(nextStep.first, nextStep.second,*m_map,m_color, m_type),
+                          m_map, m_type);
+    emit cellWasCaptured(nextStep.first, nextStep.second,
+                         m_map->getBlock(nextStep.first, nextStep.second).second, m_color);
 }
 
-void CCleverBot::findTarget(char& checked)
+void CCleverBot::findTarget()
 {
 	CMapMaker* originMap = m_map;
 	CMapMaker copyMap(*originMap);
 	m_map = &copyMap;
 	m_maxPower = 0;
 
+    char checked = 0;
 	int power = 0;
 	for(int edge(MAX_POWER); edge > 0; --edge)
 	{
 		for(int i(0); i < m_searchAreaSize; ++i)
 		{
-			auto vector = getEnabledFields();
+            auto vector = getEnabledFields();
 			foreach (auto cell, vector)
 			{
-				checked = CLogic::checkTurn(cell.first,cell.second,*m_map,m_color, m_type);
+                checked = CLogic::checkTurn(cell.first,cell.second,*m_map,m_color, m_type);
 				if(checked != ePB_disabled)
 				{
 					if((checked&ePB_grass) == ePB_grass)
@@ -113,68 +133,74 @@ void CCleverBot::findStart()
 
 bool CCleverBot::leeAlgorithm()
 {
-	int dx[4] = {1, 0, -1, 0};   // смещения, соответствующие соседям ячейки
-	int dy[4] = {0, 1, 0, -1};   // справа, снизу, слева и сверху
-	int x, y, k;
+    QVector<QPair<int, int>> delta = {QPair<int, int>(1,0),
+                                      QPair<int, int>(0, 1),
+                                      QPair<int, int>(-1, 0),
+                                      QPair<int, int>(0, -1)};
+    int x, y, k;
 	bool stop;
 
-	// распространение волны
-	int d = 0;
-	m_grid[m_startCell.second][m_startCell.first] = 0;            // стартовая ячейка помечена 0
+    int distance = 0;
+    m_grid[m_startCell.first][m_startCell.second] = 0;
 	do {
-		stop = true;               // предполагаем, что все свободные клетки уже помечены
-		for ( y = 0; y < m_map->getSize(); ++y )
-			for ( x = 0; x < m_map->getSize(); ++x )
-				if ( m_grid[y][x] == d )                         // ячейка (x, y) помечена числом d
+        stop = true;
+        for ( x = 0; x < m_map->getSize(); ++x )
+            for ( y = 0; y < m_map->getSize(); ++y )
+                if ( m_grid[x][y] == distance )
 				{
-					for ( k = 0; k < 4; ++k )                    // проходим по всем непомеченным соседям
-					{
-						int iy=y + dy[k], ix = x + dx[k];
-						if ( iy >= 0 && iy < m_map->getSize() && ix >= 0 && ix < m_map->getSize() &&
-							 m_grid[iy][ix] == BLANK )
+                    for ( k = 0; k < 4; ++k )
+                    {
+                        int ix = x + delta[k].first, iy=y + delta[k].second;
+                        if ( ix >= 0 && ix < m_map->getSize() &&
+                             iy >= 0 && iy < m_map->getSize() &&
+                             m_grid[ix][iy] == m_empty )
 						{
-							stop = false;              // найдены непомеченные клетки
-							m_grid[iy][ix] = d + 1;      // распространяем волну
+                            stop = false;
+                            m_grid[ix][iy] = distance + 1;
 						}
 					}
 				}
-		d++;
-	} while ( !stop && m_grid[m_targetCell.second][m_targetCell.first] == BLANK );
+        distance++;
+    } while ( !stop && m_grid[m_targetCell.first][m_targetCell.second] == m_empty );
 
-	if (m_grid[m_targetCell.second][m_targetCell.first] == BLANK)
+    if (m_grid[m_targetCell.first][m_targetCell.second] == m_empty)
 	{
 		m_rejectedCells.push_back(m_targetCell);
-		return false;  // путь не найден
+        return false;
 	}
 
-	// восстановление пути
-	m_pathLength = m_grid[m_targetCell.second][m_targetCell.first]; // длина кратчайшего пути из startCell в target
+    m_pathLength = m_grid[m_targetCell.first][m_targetCell.second];
 	if(m_pathLength > m_searchAreaSize)
 	{
 		m_rejectedCells.push_back(m_targetCell);
-		return false;  // путь не найден
+        return false;
 	}
 
-	x = m_targetCell.second;
-	y = m_targetCell.first;
-	d = m_pathLength;
-	while ( d > 0 )
+    x = m_targetCell.first;
+    y = m_targetCell.second;
+    if(m_pathLength < 1)
+    {
+        m_rejectedCells.push_back(m_targetCell);
+        return false;
+    }
+    distance = m_pathLength;
+    while ( distance > 0 )
 	{
-		m_path[d] = QPair<int, int>(x,y);
-		d--;
+        m_path.push_front(QPair<int, int>(x,y));
+        distance--;
 		for (k = 0; k < 4; ++k)
-		{
-			int iy=y + dy[k], ix = x + dx[k];
-			if ( iy >= 0 && iy < m_map->getSize() && ix >= 0 && ix < m_map->getSize() &&
-				 m_grid[iy][ix] == d)
+        {
+            int ix = x + delta[k].first, iy=y + delta[k].second;
+            if ( ix >= 0 && ix < m_map->getSize() &&
+                 iy >= 0 && iy < m_map->getSize() &&
+                 m_grid[ix][iy] == distance)
 			{
-				x = x + dx[k];
-				y = y + dy[k];           // переходим в ячейку, которая на 1 ближе к старту
+                x = x + delta[k].first;
+                y = y + delta[k].second;
 				break;
 			}
-		}
-	}
-	m_path[0] = QPair<int, int>(m_startCell.first, m_startCell.second);
+        }
+    }
 	return true;
 }
 
@@ -183,12 +209,13 @@ void CCleverBot::prepareGrid()
 	for(int i(0); i < m_map->getSize(); ++i)
 		for(int j(0); j < m_map->getSize(); ++j)
 		{
-			if(m_map->getBlock(i,j).second == QColor(0,0,0,0)&&
+            QColor emptyColor(0,0,0,0);
+            if(m_map->getBlock(i,j).second == emptyColor&&
 			   (m_map->getBlock(i,j).first != eMT_mountain) &&
 			   (m_map->getBlock(i,j).first != eMT_rock) &&
 			   (m_map->getBlock(i,j).first != eMT_tree))
-				m_grid[j][i] = BLANK;
+                m_grid[i][j] = m_empty;
 			else
-				m_grid[j][i] = WALL;
+                m_grid[i][j] = m_disable;
 		}
 }

@@ -15,15 +15,15 @@ void CEasyBot::makeTurn()
 	int* jTurnPos = &turnPos.second;
 	char checked;
 
-	int loseCounter = 0;
+    m_loseCounter = 0;
 	while((checked = CLogic::checkTurn(*iTurnPos,*jTurnPos,*m_map,m_color, m_type)) == ePB_disabled)
 	{
-		if(loseCounter++ > 10000)
+        if(m_loseCounter++ > 10000)
 			return;
 		turnPos = vector[qrand()%vector.size()+0];
 	}
 
-	CLogic::increasePower(checked, *m_map, m_type);
+    CLogic::increasePower(checked, m_map, m_type);
 
 	emit cellWasCaptured(*iTurnPos,*jTurnPos, m_map->getBlock(*iTurnPos,*jTurnPos).second, m_color);
 }

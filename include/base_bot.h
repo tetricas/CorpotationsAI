@@ -13,6 +13,7 @@ public:
 
 	QColor getColor();
 	EMapTypes getType();
+    virtual void makeTurn() = 0;
 
 signals:
 	void cellWasCaptured(int i, int j, QColor oldColor, QColor newColor);
@@ -25,5 +26,7 @@ protected:
 	CMapMaker* m_map;
 	QColor m_color;
 	EMapTypes m_type;
+
+    int m_loseCounter;
 };
 #endif // BASE_BOT_H

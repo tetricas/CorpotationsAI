@@ -12,9 +12,6 @@ Dialog {
 
     property alias dialogStackView: dialogStackView
 
-    property alias startItem: start
-    property alias gameItem: game
-
     contentItem: StackView {
         id: dialogStackView
 
@@ -32,8 +29,8 @@ Dialog {
     MainForm {
         id: start
 
-        startBtn.onClicked: dialogStackView.push(gameItem)
-
+        startBtn.onClicked: dialogStackView.push(game)
+        modeBtn.onClicked: dialogStackView.push(mode)
         aboutBtn.onClicked: aboutDlg.open()
         exitBtn.onClicked: close()
     }
@@ -53,8 +50,29 @@ Dialog {
         map.onUpdateScore:
         {
             scoreYouText = "You: " + player
-            scoreBot1Text = " Clac: " + firstBot
-            scoreBot2Text = " Cloc: " + secondBot
+            scoreBot1Text = " Green: " + firstBot
+            scoreBot2Text = " Blue: " + secondBot
+        }
+    }
+
+    ModeForm {
+        id: mode
+
+        backButton.onClicked: dialogStackView.pop();
+        easyBtn.onClicked:
+        {
+            game.map.gameMode = "easy"
+            dialogStackView.pop()
+        }
+        normalBtn.onClicked:
+        {
+            game.map.gameMode = "normal"
+            dialogStackView.pop()
+        }
+        hardBtn.onClicked:
+        {
+            game.map.gameMode = "hard"
+            dialogStackView.pop()
         }
     }
 

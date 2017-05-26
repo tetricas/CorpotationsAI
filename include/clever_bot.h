@@ -14,7 +14,7 @@ public:
 signals:
 public slots:
 private:
-	void findTarget(char& checked);
+    void findTarget();
 	void findStart();
 	bool leeAlgorithm();
 	void prepareGrid();
@@ -27,13 +27,13 @@ private:
 
 	bool m_isOnWay;
 
-	QVector<QPair<int, int>> m_path;
-	QVector<int> m_pathY;
-	int m_pathLength;
+    QVector<QPair<int, int>> m_path;
 	QVector<QVector<int>> m_grid;
+    int m_pathLength;
+    int m_currentStep;
 
-	const int WALL;
-	const int BLANK;
+    const int m_disable;
+    const int m_empty;
 };
 
 #endif // CLEVER_BOT_H

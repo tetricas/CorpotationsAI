@@ -6,7 +6,8 @@ CBaseBot::CBaseBot(CMapMaker *map, QColor color, EMapTypes type, QObject *parent
 	QObject(parent),
 	m_map(map),
 	m_color(color),
-	m_type(type)
+    m_type(type),
+    m_loseCounter(0)
 {}
 
 QColor CBaseBot::getColor()

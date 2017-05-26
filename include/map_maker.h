@@ -26,7 +26,7 @@ public:
 	void changePower(EMapTypes type, int powerDelta);
 
 private:
-	void makeNew();
+    void makeNew();
 
 	MyMapContainer m_map;
 	int m_size;

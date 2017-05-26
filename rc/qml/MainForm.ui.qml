@@ -4,6 +4,7 @@ import QtQuick.Controls 1.4
 Rectangle {
 
     property alias startBtn: startBtn
+    property alias modeBtn: modeBtn
     property alias aboutBtn: aboutBtn
     property alias exitBtn: exitBtn
 
@@ -18,9 +19,18 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
     }
     MainButton{
+        id: modeBtn
+        name: "Mode"
+        anchors.top: startBtn.bottom
+        anchors.topMargin: parent.height/9
+        height: parent.height/9
+        width: parent.height/3
+        anchors.horizontalCenter: parent.horizontalCenter
+    }
+    MainButton{
         id: aboutBtn
         name: "About"
-        anchors.top: startBtn.bottom
+        anchors.top: modeBtn.bottom
         anchors.topMargin: parent.height/9
         height: parent.height/9
         width: parent.height/3
